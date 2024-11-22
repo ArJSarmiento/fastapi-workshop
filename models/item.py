@@ -7,8 +7,5 @@ class Item(BaseModel):
     price: float
     description: Optional[str] = None
 
-class ItemOut(BaseModel):
-    name: str
-    price: float
-    description: Optional[str] = None
+class ItemOut(Item):
     created_at: datetime
