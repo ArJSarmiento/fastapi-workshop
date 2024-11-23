@@ -3,7 +3,8 @@ from fastapi import FastAPI, Depends, Query, Path
 from models.constants import Message
 from models.item import Item, ItemOut
 from http import HTTPStatus
-from typing import List
+from typing import List, Annotated
+from auth import app as auth_app, User, get_current_active_user
 
 app = FastAPI()
 
@@ -77,9 +78,14 @@ async def read_item_list(params: dict = Depends(common_parameters)):
 )
 async def create_item(
     item: Item,
+    current_user: Annotated[User, Depends(get_current_active_user)],
 ):
+    _ = current_user
     response = ItemOut(
         **item.model_dump(),
         created_at=datetime.now(),
     )
     return response
+
+
+app.include_router(auth_app)
