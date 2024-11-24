@@ -1,12 +1,23 @@
 from datetime import datetime
-from fastapi import FastAPI, Depends, Query, Path
+from fastapi import FastAPI, Depends, Query, Path, HTTPException
+from sqlalchemy.orm import Session
 from models.constants import Message
-from models.item import Item, ItemOut
+from models.item import Item, ItemOut, ItemDB
 from http import HTTPStatus
 from typing import List, Annotated
 from auth import app as auth_app, User, get_current_active_user
+from database import SessionLocal
 
 app = FastAPI()
+
+
+# Database Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/")
@@ -36,12 +47,18 @@ async def common_parameters(
     summary="Get Item",
     description="Get item details for a product",
 )
-async def read_item(params: dict = Depends(common_parameters)):
-    print(params)
+async def read_item(
+    params: dict = Depends(common_parameters),
+    db: Session = Depends(get_db)
+):
+    item = db.query(ItemDB).filter(ItemDB.id == params["item_id"]).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    
     return ItemOut(
-        name=str(params["item_id"]),
-        price=100,
-        description=params["q"],
+        name=item.name,
+        price=item.price,
+        description=item.description,
         created_at=datetime.now(),
     )
 
@@ -51,14 +68,19 @@ async def read_item(params: dict = Depends(common_parameters)):
     dependencies=[Depends(common_parameters)],
     response_model=List[ItemOut],
 )
-async def read_item_list(params: dict = Depends(common_parameters)):
+async def read_item_list(
+    params: dict = Depends(common_parameters),
+    db: Session = Depends(get_db)
+):
+    items = db.query(ItemDB).all()
     return [
         ItemOut(
-            name=str(params["item_id"]),
-            price=100,
-            description=params["q"],
+            name=item.name,
+            price=item.price,
+            description=item.description,
             created_at=datetime.now(),
         )
+        for item in items
     ]
 
 
@@ -79,13 +101,25 @@ async def read_item_list(params: dict = Depends(common_parameters)):
 async def create_item(
     item: Item,
     current_user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
 ):
     _ = current_user
-    response = ItemOut(
-        **item.model_dump(),
+    db_item = ItemDB(
+        name=item.name,
+        price=item.price,
+        description=item.description,
+        id=1
+    )
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    
+    return ItemOut(
+        name=db_item.name,
+        price=db_item.price,
+        description=db_item.description,
         created_at=datetime.now(),
     )
-    return response
 
 
 app.include_router(auth_app)
