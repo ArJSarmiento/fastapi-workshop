@@ -11,11 +11,11 @@ services:
       - app-network
 
   fastapi:
-    build:
-      dockerfile: Dockerfile
-    expose:
-      - "3000"
-    command: uvicorn main:app --host=0.0.0.0 --port=3000 --workers=4
+    image: 682033466856.dkr.ecr.ap-southeast-1.amazonaws.com/prod/fastinfra:latest
+    container_name: fastapi
+    restart: always
+    ports:
+    - "8000:8000"
     networks:
       - app-network
     env_file:
