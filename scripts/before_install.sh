@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+
+sudo mkdir -p /var/log/codedeploy
+sudo touch /var/log/codedeploy/before-install.log
+sudo chmod 664 /var/log/codedeploy/before-install.log
 exec >/var/log/codedeploy/before-install.log 2>&1
 
 echo "Starting before_install script..."

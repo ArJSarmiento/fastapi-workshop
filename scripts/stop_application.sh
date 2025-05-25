@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+
+sudo mkdir -p /var/log/codedeploy
+sudo touch /var/log/codedeploy/stop-application.log
+sudo chmod 664 /var/log/codedeploy/stop-application.log
 exec >/var/log/codedeploy/stop-application.log 2>&1
 
 APP_DIR="/home/ec2-user/fastapi-app"
