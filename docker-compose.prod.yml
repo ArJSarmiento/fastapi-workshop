@@ -12,6 +12,7 @@ services:
 
   fastapi:
     image: 682033466856.dkr.ecr.ap-southeast-1.amazonaws.com/prod/fastinfra:latest
+    platform: linux/amd64
     container_name: fastapi
     restart: always
     ports:

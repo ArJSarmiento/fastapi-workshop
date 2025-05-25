@@ -1,0 +1,47 @@
+version: 0.2
+
+env:
+  variables:
+    ECR_REPOSITORY_NAME: "fastapi-app"
+    DOCKER_BUILDKIT: "1"
+  parameter-store:
+    SEMANTIC_VERSION: "/app/version"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 27
+  
+  pre_build:
+    commands:
+      # Login to Amazon ECR
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      # Set image tags
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${SEMANTIC_VERSION}-${COMMIT_HASH}
+      - LATEST_TAG=latest
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}
+
+  build:
+    commands:
+      # Build Docker image
+      - echo Building the Docker image...
+      - docker build --platform linux/amd64 -t ${REPOSITORY_URI}:${IMAGE_TAG} -t ${REPOSITORY_URI}:${LATEST_TAG} .
+      
+  post_build:
+    commands:
+      # Push Docker images to ECR
+      - echo Pushing Docker images to ECR...
+      - docker push ${REPOSITORY_URI}:${IMAGE_TAG}
+      - docker push ${REPOSITORY_URI}:${LATEST_TAG}
+
+      # Create artifact with image details
+      - echo Writing image definitions file...
+      - printf '{"ImageURI":"%s"}' ${REPOSITORY_URI}:${IMAGE_TAG} > imageDefinitions.json
+
+artifacts:
+  files:
+    - imageDefinitions.json
+    - appspec.yml
+
+  discard-paths: yes
