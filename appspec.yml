@@ -3,6 +3,10 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/fastapi-app
+    exclude:
+      - appspec.yml
+      - scripts/start_application.sh
+      - scripts/stop_application.sh
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
