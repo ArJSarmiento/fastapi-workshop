@@ -41,7 +41,5 @@ phases:
 artifacts:
   files:
     - imageDefinitions.json
-    - appspec.yml
-    - scripts/before_install.sh
 
   discard-paths: no
