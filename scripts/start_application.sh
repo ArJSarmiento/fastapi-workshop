@@ -12,29 +12,29 @@ AWS_REGION="ap-southeast-1"
 echo "Starting application deployment..."
 
 # Fetch configuration from Parameter Store
-echo "Fetching configuration from Parameter Store..."
-DB_HOST=$(
-    aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/url" \
-        --with-decryption --query "Parameter.Value" --output text
-)
-DB_USER=$(
-    aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/user" \
-        --with-decryption --query "Parameter.Value" --output text
-)
-DB_PASSWORD=$(
-    aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/password" \
-        --with-decryption --query "Parameter.Value" --output text
-)
-DB_NAME=$(
-    aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/name" \
-        --with-decryption --query "Parameter.Value" --output text
-)
+# echo "Fetching configuration from Parameter Store..."
+# DB_HOST=$(
+#     aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/url" \
+#         --with-decryption --query "Parameter.Value" --output text
+# )
+# DB_USER=$(
+#     aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/user" \
+#         --with-decryption --query "Parameter.Value" --output text
+# )
+# DB_PASSWORD=$(
+#     aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/password" \
+#         --with-decryption --query "Parameter.Value" --output text
+# )
+# DB_NAME=$(
+#     aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/database/name" \
+#         --with-decryption --query "Parameter.Value" --output text
+# )
 
-# Create/update .env file
-echo "Creating .env file..."
-cat <<EOF >${APP_DIR}/.env
-DATABASE_URL=postgresql+psycopg2://$DB_USER:$DB_PASSWORD@$DB_HOST:5432/$DB_NAME
-EOF
+# # Create/update .env file
+# echo "Creating .env file..."
+# cat <<EOF >${APP_DIR}/.env
+# DATABASE_URL=postgresql+psycopg2://$DB_USER:$DB_PASSWORD@$DB_HOST:5432/$DB_NAME
+# EOF
 
 # ECR Authentication
 echo "Authenticating with ECR..."

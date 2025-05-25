@@ -11,7 +11,7 @@ services:
       - app-network
 
   fastapi:
-    image: 682033466856.dkr.ecr.ap-southeast-1.amazonaws.com/prod/fastinfra:latest
+    image: 682033466856.dkr.ecr.ap-southeast-1.amazonaws.com/fastproj-infra-dev/fastapi-app:latest
     platform: linux/amd64
     container_name: fastapi
     restart: always
