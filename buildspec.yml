@@ -2,7 +2,6 @@ version: 0.2
 
 env:
   variables:
-    ECR_REPOSITORY_NAME: "fastapi-app"
     DOCKER_BUILDKIT: "1"
   parameter-store:
     SEMANTIC_VERSION: "/app/version"
