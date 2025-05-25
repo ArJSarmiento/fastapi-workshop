@@ -48,4 +48,4 @@ artifacts:
     - docker-compose.prod.yml
     - nginx.conf
 
-  discard-paths: yes
+  discard-paths: no
