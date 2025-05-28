@@ -7,11 +7,10 @@ file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
-      runas: ec2-user
   ApplicationStart:
     - location: scripts/start_application.sh
-      timeout: 180
-      runas: ec2-user
+      timeout: 600
+      runas: root
       environment:
         variables:
           PROJECT_NAME: $PROJECT_NAME
@@ -21,4 +20,3 @@ hooks:
           ECR_REPOSITORY_NAME: $ECR_REPOSITORY_NAME
   ApplicationStop:
     - location: scripts/stop_application.sh
-      runas: ec2-user
