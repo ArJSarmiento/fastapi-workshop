@@ -37,10 +37,20 @@ phases:
       # Create artifact with image details
       - echo Writing image definitions file...
       - printf '{"ImageURI":"%s"}' ${REPOSITORY_URI}:${IMAGE_TAG} > imageDefinitions.json
+      
+      # Create environment variables file for CodeDeploy
+      - echo Creating environment variables file...
+      - echo "ECR_REPOSITORY_URL=${REPOSITORY_URI}:${IMAGE_TAG}" > deployment.env
+      - echo "ECR_REPOSITORY_LATEST=${REPOSITORY_URI}:${LATEST_TAG}" >> deployment.env
+      - echo "IMAGE_TAG=${IMAGE_TAG}" >> deployment.env
+      - echo "COMMIT_HASH=${COMMIT_HASH}" >> deployment.env
+      - echo "SEMANTIC_VERSION=${SEMANTIC_VERSION}" >> deployment.env
+      - echo "AWS_REGION=${AWS_DEFAULT_REGION}" >> deployment.env
 
 artifacts:
   files:
     - imageDefinitions.json
+    - deployment.env
     - appspec.yml
     - scripts/before_install.sh
     - scripts/start_application.sh
