@@ -1,13 +1,10 @@
 #!/bin/bash
 set -e
 
-# Create local logs directory
-mkdir -p ./logs
-touch ./logs/start-application.log
-chmod 664 ./logs/start-application.log
-exec >./logs/start-application.log 2>&1
+# Log all output
+exec > >(tee -a /var/log/codedeploy-start.log) 2>&1
 
-APP_DIR="."
+APP_DIR="/home/ec2-user/fastapi-app"
 AWS_REGION="ap-southeast-1"
 
 echo "Starting application deployment..."
