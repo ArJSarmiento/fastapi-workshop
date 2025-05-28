@@ -9,5 +9,14 @@ hooks:
     - location: scripts/before_install.sh
   ApplicationStart:
     - location: scripts/start_application.sh
+      timeout: 180
+      runas: root
+      environment:
+        variables:
+          PROJECT_NAME: $PROJECT_NAME
+          ENVIRONMENT: $ENVIRONMENT
+          AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+          ECR_REPOSITORY_URL: $ECR_REPOSITORY_URL
+          ECR_REPOSITORY_NAME: $ECR_REPOSITORY_NAME
   ApplicationStop:
     - location: scripts/stop_application.sh

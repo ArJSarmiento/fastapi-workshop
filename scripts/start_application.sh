@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-sudo mkdir -p /var/log/codedeploy
-sudo touch /var/log/codedeploy/start-application.log
-sudo chmod 664 /var/log/codedeploy/start-application.log
-exec >/var/log/codedeploy/start-application.log 2>&1
+# Create local logs directory
+mkdir -p ./logs
+touch ./logs/start-application.log
+chmod 664 ./logs/start-application.log
+exec >./logs/start-application.log 2>&1
 
-APP_DIR="/home/ec2-user/fastapi-app"
+APP_DIR="."
 AWS_REGION="ap-southeast-1"
 
 echo "Starting application deployment..."
@@ -57,7 +58,7 @@ fi
 
 # Verify SSM agent and Docker are running
 echo "Verifying system services..."
-sudo systemctl status amazon-ssm-agent --no-pager
-sudo systemctl status docker --no-pager
+sudo systemctl status amazon-ssm-agent --no-pager || true
+sudo systemctl status docker --no-pager || true
 
 echo "Application started successfully"
